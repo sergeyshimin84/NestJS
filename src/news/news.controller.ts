@@ -20,7 +20,7 @@ export class NewsController {
 
   @Post()
   create(@Body() createNewsDto: News) {
-    return this.newsService.create(createNewsDto);
+    return this.newsService.create(createNewsDto) ? 'Новость успешно изменена' : 'Ошибка изменения';
   }
 
   @Patch('/:id')
