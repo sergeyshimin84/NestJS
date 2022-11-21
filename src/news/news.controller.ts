@@ -1,21 +1,31 @@
-import { NewsEdit } from './news.interface';
 import { Body, Controller, Delete, Get, Param, Post, Patch } from '@nestjs/common';
+
+import { NewsEdit } from './news.interface';
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './create.news.dto';
 import { News } from './news.interface';
+import { htmlTemplate } from '../views/template';
+import { newsTemplate } from '../views/news';
 
 @Controller('news')
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
-  @Get()
-  getNews() {
-    return this.newsService.getAllNews();
+  @Get('all')
+  async getAll(): Promise<News[]> {
+    return this.newsService.findAll();
   }
 
   @Get('/:id')
   get(@Param('id') id: number) {
     return this.newsService.find(id);
+  }
+
+  @Get()
+  async getViewAll(): Promise<string> {
+    const news = this.newsService.findAll();
+    
+    return htmlTemplate(newsTemplate(news));
   }
 
   @Post()
