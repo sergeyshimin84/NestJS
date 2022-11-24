@@ -6,14 +6,23 @@ import { CreateNewsDto } from './create.news.dto';
 import { News } from './news.interface';
 import { htmlTemplate } from '../views/template';
 import { newsTemplate } from '../views/news';
+import { strict } from 'assert';
 
 @Controller('news')
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
-  @Get('all')
-  async getAll(): Promise<News[]> {
-    return this.newsService.findAll();
+  @Get()
+  getNews() {
+    return this.newsService.getAllNews();
+  }
+  
+  @Get('/all')
+  getAllView() {
+    const news = this.newsService.getAllNews()
+    const content = newsTemplate(news)
+
+    return htmlTemplate(content)
   }
 
   @Get('/:id')
