@@ -5,6 +5,7 @@ export interface News {
     description: string;
     author: string;
     countView?: number;
+    createdAt?: number;
 }
 
 export type AllNews = Record<string | number, News>

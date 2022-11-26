@@ -7,7 +7,6 @@ import { News } from './news.interface';
 import { htmlTemplate } from '../views/template';
 import { newsTemplate } from '../views/news';
 import { strict } from 'assert';
-import { CommentsController } from './comments';
 
 @Controller('news')
 export class NewsController {

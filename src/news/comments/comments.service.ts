@@ -19,7 +19,7 @@ export class CommentsService {
         return 'Комментарии не найдены'
     }
 
-    create(newsId, comment: Comment): Comment {
+    create(newsId, comment: Comment): Comment | string {
         const id = getRandomInt(0, 10000) as string | number;
 
         if(!this.comments[newsId]) {
