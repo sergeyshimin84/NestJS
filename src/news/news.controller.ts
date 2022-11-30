@@ -1,56 +1,53 @@
-import { Body, Controller, Delete, Get, Param, Post, Patch } from '@nestjs/common';
-
-import { NewsEdit } from './news.interface';
-import { NewsService } from './news.service';
 import { CreateNewsDto } from './create.news.dto';
+import { Body, Controller, Delete, Get, Param, Post, Patch, UseInterceptors, UploadedFile, Put } from '@nestjs/common';
+
+import { NewsService } from './news.service';
 import { News } from './news.interface';
 import { htmlTemplate } from '../views/template';
 import { newsTemplate } from '../views/news';
-import { strict } from 'assert';
+import { NewsIdDto } from './comments/dtos/news-id.dto/news-id.dto';
+import { CommentsService } from './comments/comments.service';
+import { News } from './news.interface';
 
 @Controller('news')
 export class NewsController {
-  constructor(private readonly newsService: NewsService) {}
+  constructor(
+    private readonly newsService: NewsService,
+    private readonly commentService: CommentsService,
+  ) {}
 
-  @Get()
-  getNews() {
-    return this.newsService.getAllNews();
-  }
+  @Get('api/detail/:id')
+  get(@Param('id') id: string): News {...}
+
+  @Get('/api/all')
+  getAll(): News[] {...}
   
-  @Get('/all')
-  getAllView() {
-    const news = this.newsService.getAllNews()
-    const content = newsTemplate(news)
+  @Get('/detail/:id')
+  getDetailView(@Param('id') id: string) {...}
 
-    return htmlTemplate(content)
+  @Post('/api')
+  @UseInterceptors(
+    FileInterceptor('cover', {
+      storage: diskStorage({
+        destination: HelperFileLoader.destinationPath,
+        filename: HelperFileLoader.customFileName,
+      }),
+    }),
+  )
+  create(
+    @Body() news: CreateNewsDto,
+    @UploadedFile() cover: Express.Multer.File,
+  ): News {
+    if (cover?.filename) {
+      news.cover = PATH_NEWS + cover.filename;
+    }
+
+    return this.newsService.create(news);
   }
 
-  @Get('/:id')
-  get(@Param('id') id: number) {
-    return this.newsService.find(id);
-  }
+  @Put('/api/:id')
+  edit(@Param('id') id: string, @Body() news: EditNewsDto): News {...}
 
-  @Get()
-  async getViewAll(): Promise<string> {
-    const news = this.newsService.findAll();
-    
-    return htmlTemplate(newsTemplate(news));
-  }
-
-  @Post()
-  create(@Body() createNewsDto: News) {
-    return this.newsService.create(createNewsDto) ? 'Новость успешно изменена' : 'Ошибка изменения';
-  }
-
-  @Patch('/:id')
-  edit(@Param('id') id: number, @Body() news: NewsEdit) {
-    return this.newsService.edit(id, news);
-  }
-
-  @Delete('/:id')
-  remove(@Param('id') id: number) {
-    const isRemoved = this.newsService.remove(id);
-
-    return isRemoved ? 'Новость удалена' : 'Передан неверный идентификатор';
-  }
+  @Delete('/api/:id')
+  remove(@Param('id') id: string): string {...}
 }

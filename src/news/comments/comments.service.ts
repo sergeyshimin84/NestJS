@@ -1,47 +1,54 @@
-import { Comments } from './comments.interface';
+import { getRandomInt } from '../news.service';
 import { Injectable } from '@nestjs/common';
+import { CreateCommentDto } from './dtos/create-comment-dto';
+
+export type Comment = {
+    id?: number;
+    message: string;
+    author: string;
+};
 
 @Injectable()
 export class CommentsService {
-    private readonly comments = {
-        1: [{
-            id: 123,
-            message: "Мой первый комментарий",
-            author: "Вася",
-        }]
-    }
-    
-    find(newsId: string | number): Comment[] | string {
-        if (this.comments[newsId]) {
-            
-            return this.comments[newsId] 
+    private readonly comments = {};
+
+    create(idNews: number, comment: Comment) {
+        if (!this.comments[idNews]) {
+            this.comments[idNews] = [];
         }
-        return 'Комментарии не найдены'
+
+        this.comments[idNews].push({ ...comment, id: getRandomInt() });
+        return 'Комментарий был создан';
     }
 
-    create(newsId, comment: Comment): Comment | string {
-        const id = getRandomInt(0, 10000) as string | number;
-
-        if(!this.comments[newsId]) {
-            this.comments[newsId] = []
+    edit(idNews: number, idComment: number, comment: CommentEdit) {
+        const indexComment =
+            this.comments[idNews]?.findIndex((c) => c.id === idComment) === -1;
+        if (!this.comments[idNews] || indexComment) {
+            return false;
         }
 
-        this.comments[newsId].push({id, ...comment})
-     
-        return 'Комментарий был создан'
+        this.comments[idNews][indexComment] = {
+            ...this.comments[idNews][indexComment],
+            comment,
+        };
+        return 'Комментарий был создан';
     }
 
-    remove(newsId: string | number, commentId: string | number): null | Comment[] {
-        if(!this.comments[newsId]) {
-            return null
+    find(idNews: number): Comment[] | null {
+        return this.comments[idNews] || null;
+    }
+
+    async remove(idNews:string, idComment:string): Promise<boolean>{
+        const index = this.comments?.[idNews].findIndex((x) => x.id === idComment);
+        if (index !== -1) {
+            this.comments[idNews].splice(index, 1);
+            return true;
         }
+        return false;
+    }
 
-        const indexComment = this.comments[newsId].findIndex(comment => comment.id === commentId)
-
-        if (indexComment === -1) {
-            return null
-        }
-
-        return this.comments[newsId].splice(indexComment, 1)
+    async removeAll(idNews:string):Promise<boolean> {
+        return delete this.comments?.[idNews];
     }
 }

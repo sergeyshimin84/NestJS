@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 import { CreateNewsDto } from './create.news.dto';
 import { News, AllNews, NewsEdit } from './news.interface';
 
@@ -12,31 +11,35 @@ function getRandomInt(min: number, max: number): number {
 
 @Injectable()
 export class NewsService {
-  private readonly news: AllNews = {
-    1: {
+  private readonly news: News[] = [
+    {
       id: 1,
       title: 'Наша первая новость',
       description: 'Уррааа! Наша первая новость',
       author: 'Владислав',
       countView: 12,
+      cover: 
+        `https://i.gifer.com/RRzL.gif`,
     },
-  };
-
-  getAllNews(): AllNews {
-    return this.news;
-  }
-
-  find(id: number | string): News | undefined {
-    return this.news[id];
-  }
+  ];
 
   create(news: News): News {
-    const id = getRandomInt(0, 10000) as string | number;
+    const id = getRandomInt(0, 10000);
+    const finalNews = {
+      ...news,
+      id: id,
+    };
 
-    const newNews: News = { id: '1', ...news };
-    this.news[id] = newNews;
-    
-    return newNews;
+    this.news.push(finalNews);
+    return finalNews;
+  }
+
+  find(id: News['id']): News | undefined {
+    return this.news.find((news: News) => news.id === id);
+  }
+
+  getAll(): News[] {
+    return this.news;
   }
 
   remove(id: number | string): boolean {
@@ -48,16 +51,17 @@ export class NewsService {
     return false;
   }
 
-  edit(id: number | string, newsEdit: NewsEdit): News | string {
-    if (this.news[id]) {
-      this.news[id] = {
-        ...this.news[id],
-        ...newsEdit
-      }
+  edit(id: number, news: NewsEdit): News | undefined {
+    const indexEditableNews = this.news.findIndex((news: News) => news.id === id);
+    if (indexEditableNews !== -1) {
+      this.news[indexEditableNews] = {
+        ...this.news[indexEditableNews],
+        ...news,
+      };
 
-      return this.news[id]
+      return this.news[indexEditableNews];
     }
 
-    return 'Не найдена новость';
+    return undefined;
   }
 }
