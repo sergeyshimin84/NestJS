@@ -9,4 +9,9 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Post()
+  create(@Body() createUserDto: CreateUserDto):Promise<string> {
+    return 'This action adds a new user';
+  }
 }
