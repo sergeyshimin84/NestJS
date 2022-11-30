@@ -9,24 +9,16 @@ import {
 export class EditCommentDto {
     @IsString()
     @IsNotEmpty()
-    @ValidateIf((o) => o.title)
-    title: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @ValidateIf((o) => o.description)
-    description: string;
+    @ValidateIf((o) => o.message)
+    message: string;
 
     @IsString()
     @IsNotEmpty()
     @ValidateIf((o) => o.author)
     author: string;
 
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
-    @ValidateIf((o) => o.countView || o.countView === '')
-    countView: number;
-
-    @ValidateIf((o) => o.cover)
-    cover: string;
+    @ValidateIf((o) => o.comment)
+    comment: string;
 }

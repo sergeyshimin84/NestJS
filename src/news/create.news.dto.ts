@@ -1,24 +1,21 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateNewsDto {
+  @IsNotEmpty()
   @IsString()
   title: string;
 
-  @IsString({
-    message: 'поле description должно быть строкой',
-  })
+  @IsNotEmpty()
+  @IsString()
   description: string;
 
-  @ApiProperty({
-    description: 'Description news',
-    minimum: 1,
-    maximum: 2,
-  })
+  @IsNotEmpty()
   @IsString()
   author: string;
 
-  @IsString()
-  @IsOptional()
-  countView?: string;
+  @ValidateIf((o) => o.countView || o.countView === '')
+  countView: number;
+
+  cover: string;
 }

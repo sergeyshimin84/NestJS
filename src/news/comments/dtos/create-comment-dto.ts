@@ -13,4 +13,10 @@ export class CreateCommentDto {
     @IsNotEmpty()
     @IsString()
     author: string;
+
+    @IsNotEmpty()
+    @IsString()
+    comment: string;
+
+    avatar: string;
 }
