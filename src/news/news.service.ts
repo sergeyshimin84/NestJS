@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateNewsDto } from './create.news.dto';
 import { News, AllNews, NewsEdit } from './news.interface';
 
-function getRandomInt(min: number, max: number): number {
+export function getRandomInt(min: number, max: number): number {
   min = Math.ceil(min);
   max = Math.floor(max);
 
