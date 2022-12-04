@@ -9,7 +9,7 @@ export const User = createParamDecorator(
     },
 );
 
-// @Get()
-// async findOne(@User('firstName') firstName: string):Promise<void> {
-//     console.log(`Hello ${firstName}`);
-// }
+@Get()
+async findOne(@User('firstName') firstName: string):Promise<void> {
+    console.log(`Hello ${firstName}`);
+}

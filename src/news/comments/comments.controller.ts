@@ -3,7 +3,7 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dtos/create-comment-dto';
 import { EditCommentDto } from './dtos/edit-comment-dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
-import { HelperFileLoader } from '../../';
+import { HelperFileLoader } from '../../utils/HelperFileLoader';
 
 const PATH_NEWS = '/news-static/comments/';
 HelperFileLoader.path = PATH_NEWS;

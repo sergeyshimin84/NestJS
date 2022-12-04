@@ -2,6 +2,12 @@ import { getRandomInt } from '../news.service';
 import { Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dtos/create-comment-dto';
 
+export type Comment = {
+    id?: number;
+    message: string;
+    author: string;
+};
+
 export type CommentEdit = {
     id?: number;
     message?: string;
