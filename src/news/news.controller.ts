@@ -1,3 +1,4 @@
+import { NewsEntity } from './news.entity';
 import {
   Body,
   Controller,
@@ -88,13 +89,22 @@ export class NewsController {
   )
     async create(
       @Body() news: NewsCreateDto,
-      @UploadedFile() cover: Express.Multer.File,
-    ) {
-      console.log(news);
-      let coverPath = undefined;
-      if (cover?.filename?.length > 0) coverPath = PATH_NEWS + cover.filename;
+      @UploadedFile() cover,
+    ): Promise<NewsEntity> {
+      const fileExtension = cover.originalname.split('.').reverse()[0];
+      if (!fileExtension || !fileExtension.match(/(jpg|jpeg|png|gif)$/)) {
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error: 'Неверный формат данных',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (cover?.filename)
+        news.cover = PATH_NEWS + cover.filename;
       
-      const _news = this.newsService.create({ ...news, cover: coverPath });
+      const createdNews = await this.newsService.create(news);
       await this.mailService.sendNewNewsForAdmins(
         ['snezhkinv@yandex.ru', 'snezhkinv20@gmail.com'],
         _news,

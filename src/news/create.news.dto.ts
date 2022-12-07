@@ -10,10 +10,6 @@ export class CreateNewsDto {
   @IsString()
   description: string;
 
-  @IsNotEmpty()
-  @IsString()
-  author: string;
-
   @ValidateIf((o) => o.countView || o.countView === '')
   countView: number;
 

@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateNewsDto } from './create.news.dto';
 import { News, AllNews, NewsEdit } from './news.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { NewsEntity } from './news.entity';
+import { formatWithCursor } from 'prettier';
 
 export function getRandomInt(min: number, max: number): number {
   min = Math.ceil(min);
@@ -11,6 +15,10 @@ export function getRandomInt(min: number, max: number): number {
 
 @Injectable()
 export class NewsService {
+  constructor(
+    @InjectRepository(NewsEntity)
+    private newsRepository: Repository<NewsEntity>,
+  ) {} 
   private readonly news: News[] = [
     {
       id: 1,
@@ -23,15 +31,12 @@ export class NewsService {
     },
   ];
 
-  create(news: News): News {
-    const id = getRandomInt(0, 10000);
-    const finalNews = {
-      ...news,
-      id: id,
-    };
-
-    this.news.push(finalNews);
-    return finalNews;
+  async create(news: CreateNewsDto): Promise<NewsEntity> {
+    const newsEntity = new NewsEntity();
+    newsEntity.title = news.title;
+    newsEntity.description = news.description;
+    newsEntity.cover = news.cover;
+    return await this.newsRepository.save(newsEntity);
   }
 
   find(id: News['id']): News | undefined {
