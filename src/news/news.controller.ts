@@ -1,3 +1,4 @@
+import { EditCommentDto } from './comments/dtos/edit-comment-dto';
 import { NewsEntity } from './news.entity';
 import {
   Body,
@@ -33,28 +34,31 @@ export class NewsController {
   ) {}
 
   @Get('/api/detail/:id')
-  get(@Param('id') id: string): News {
+  async get(@Param('id') id: string): Promise<NewsEntity> {
     const inInt = parseInt(id);
-    const news = this.newsService.find(inInt);
-    const comments = this.commentService.find(inInt);
+    const news = this.newsService.findById(inInt);
+    if (!news) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Новость была не найдена',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
-    return {
-      ...news,
-      comments,
-    };
+    return news;
   }
 
   @Get('api/all')
-  getAll(): News[] {
-    console.log('getAll');
-    const news = this.newsService.getAll();
-    return news;
+  async getAll(): Promise<NewsEntity[]> {
+    return this.newsService.getAll();
   }
 
   @Get('/all')
   @Render('news-list')
-  getAllView() {
-    const news = this.newsService.getAll();
+  async getAllView() {
+    const news = await this.newsService.getAll();
 
     return { news, title: 'Список новочтей!' };
   }
@@ -67,9 +71,18 @@ export class NewsController {
 
   @Get('/detail/:id')
   @Render('news-detail')
-  getDataView(@Param('id') id: string) {
+  async getDatailView(@Param('id') id: string) {
     const inInt = parseInt(id);
-    const news = this.newsService.find(inInt);
+    const news = await this.newsService.findById(inInt);
+    if (!news) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Новость была не найдена',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
     const comments = this.commentService.find(inInt);
 
     return {
@@ -111,6 +124,38 @@ export class NewsController {
       );
       return _news;
     }
+  
+  @Put('/api/:id')
+  async edit(
+    @Param('id') id: string, 
+    @Body() news: EditCommentDto
+  ): Promise<NewsEntity> {
+    const idInt = parseInt(id);
+    const newsEditable = await this.newsService.edit(idInt, news);
+    if (!news) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Новость была не найдена',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return newsEditable; 
+  }
+
+  @Delete('/api/:id')
+  async remove(@Param('id') id: string): Promise<NewsEntity> {
+    const idInt = parseInt(id);
+    const isRemoved = await this.newsService.remove(idInt);
+    throw new HttpException(
+      {
+        status: HttpStatus.OK,
+        error: isRemoved ? 'Новость удалена' : 'Передан неверный идентификатор';
+      }
+      HttpStatus.OK,
+    );
+  }
 }
 
 
