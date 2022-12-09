@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   Render,
   Res,
+  ParseIntPipe,
   } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -34,9 +35,8 @@ export class NewsController {
   ) {}
 
   @Get('/api/detail/:id')
-  async get(@Param('id') id: string): Promise<NewsEntity> {
-    const inInt = parseInt(id);
-    const news = this.newsService.findById(inInt);
+  async get(@Param('id', ParseIntPipe) id: number): Promise<NewsEntity> {
+    const news = this.newsService.findById(id);
     if (!news) {
       throw new HttpException(
         {
@@ -71,9 +71,8 @@ export class NewsController {
 
   @Get('/detail/:id')
   @Render('news-detail')
-  async getDatailView(@Param('id') id: string) {
-    const inInt = parseInt(id);
-    const news = await this.newsService.findById(inInt);
+  async getDatailView(@Param('id', ParseIntPipe) id: number) {
+    const news = await this.newsService.findById(id);
     if (!news) {
       throw new HttpException(
         {
@@ -83,7 +82,7 @@ export class NewsController {
         HttpStatus.NOT_FOUND,
       );
     }
-    const comments = this.commentService.find(inInt);
+    const comments = this.commentService.find(id);
 
     return {
       news,
@@ -127,11 +126,10 @@ export class NewsController {
   
   @Put('/api/:id')
   async edit(
-    @Param('id') id: string, 
+    @Param('id', ParseIntPipe) id: number, 
     @Body() news: EditCommentDto
   ): Promise<NewsEntity> {
-    const idInt = parseInt(id);
-    const newsEditable = await this.newsService.edit(idInt, news);
+    const newsEditable = await this.newsService.edit(id, news);
     if (!news) {
       throw new HttpException(
         {
@@ -145,9 +143,8 @@ export class NewsController {
   }
 
   @Delete('/api/:id')
-  async remove(@Param('id') id: string): Promise<NewsEntity> {
-    const idInt = parseInt(id);
-    const isRemoved = await this.newsService.remove(idInt);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<NewsEntity> {
+    const isRemoved = await this.newsService.remove(id);
     throw new HttpException(
       {
         status: HttpStatus.OK,

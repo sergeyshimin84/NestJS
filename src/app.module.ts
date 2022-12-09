@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { NewsModule } from './news/news.module';
 import { MailModule } from './mail/mail.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
 
 
 @Module({
@@ -25,6 +26,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       }),
       NewsModule,
       MailModule,
+      UsersModule,
     ],
   controllers: [AppController],
   providers: [AppService],
