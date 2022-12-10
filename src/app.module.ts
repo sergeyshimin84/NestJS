@@ -7,6 +7,10 @@ import { NewsModule } from './news/news.module';
 import { MailModule } from './mail/mail.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
+import { AuthService } from './auth/auth.service';
+import { AuchController } from './auch/auch.controller';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -27,8 +31,9 @@ import { UsersModule } from './users/users.module';
       NewsModule,
       MailModule,
       UsersModule,
+      AuthModule,
     ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, AuchController, AuthController],
+  providers: [AppService, AuthService],
 })
 export class AppModule {}

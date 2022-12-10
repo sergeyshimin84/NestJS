@@ -9,6 +9,8 @@ import {
     } from 'typeorm';
     import { NewsEntity } from 'src/news/news.entity';
     import { CommentsEntity } from '../news/comments/comments.entity';
+    import { IsEnum } from 'class-validator';
+    import { Role } from './dtos/role.enum';
     
     @Entity('news')
     export class UsersEntity {
@@ -17,6 +19,16 @@ import {
         
         @Column('text')
         firstName: string;
+
+        @Column('text')
+        email: string;
+        
+        @Column('text')
+        password: string;
+
+        @Column('text')
+        @IsEnum(Role)
+        roles: Role;
         
         @OneToMany(() => NewsEntity, (news) => news.user)
         news: NewsEntity[];
