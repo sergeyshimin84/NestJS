@@ -1,9 +1,11 @@
+import { UsersModule } from './../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { NewsController } from './news.controller';
 import { NewsService } from './news.service';
 import { CommentsModule } from './comments/comments.module';
 import { MailModule } from '../mail/mail.module';
+import { NewsEntity } from './news.entity';
 
 @Module({
   controllers: [NewsController],
@@ -11,6 +13,9 @@ import { MailModule } from '../mail/mail.module';
   imports: [
     TypeOrmModule.forFeature([NewsEntity]),
     CommentsModule, 
-    MailModule],
+    MailModule,
+    UsersModule,
+  ],
+  exports: [TypeOrmModule.forFeature([NewsEntity]), NewsService],
 })
 export class NewsModule {}

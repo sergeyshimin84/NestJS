@@ -3,6 +3,7 @@ import {
     IsString,
     ValidateIf,
     IsDateString,
+    IsNumber,
 } from 'class-validator';    
 
 export class CreateCommentDto {
@@ -11,12 +12,6 @@ export class CreateCommentDto {
     message: string;
 
     @IsNotEmpty()
-    @IsString()
-    author: string;
-
-    @IsNotEmpty()
-    @IsString()
-    comment: string;
-
-    avatar: string;
+    @IsNumber()
+    userId: number;
 }
