@@ -1,3 +1,6 @@
+import { Role } from './../users/role/role.enum';
+import { Roles } from './../users/role/roles.decorator';
+import { LocalAuthGuard } from './../auth/local-auth.guard';
 import { EditCommentDto } from './comments/dtos/edit-comment-dto';
 import { NewsEntity } from './news.entity';
 import {
@@ -22,6 +25,8 @@ import { NewsIdDto } from './dtos/news-id.dto';
 import { NewsCreateDto } from './dtos/news-create.dto';
 import { HelperFileLoader } from '../utils/HelperFileLoader';
 import { MailService } from '../mail/mail.service';
+import { UseGuards } from '@nestjs/common/decorators';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
   
 const PATH_NEWS = '/news-static/';
 HelperFileLoader.path = PATH_NEWS;
@@ -86,6 +91,8 @@ export class NewsController {
     return news;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.Admin, Role.Moderator)
   @Post('/api')
   @UseInterceptors(
     FileInterceptor('cover', {
@@ -100,7 +107,7 @@ export class NewsController {
       @UploadedFile() cover,
     ): Promise<NewsEntity> {
       const fileExtension = cover.originalname.split('.').reverse()[0];
-      if (!fileExtension || !fileExtension.match(/(jpg|jpeg|png|gif)$/)) {
+      if (!fileExtension || !fileExtension.match(/(jpg|jpeg|png|gif)$/i)) {
         throw new HttpException(
           {
             status: HttpStatus.INTERNAL_SERVER_ERROR,

@@ -20,6 +20,7 @@ export class NewsService {
     newsEntity.title = news.title;
     newsEntity.description = news.description;
     newsEntity.cover = news.cover;
+    const _user = await this.usersService.findById(parseInt(news.userId));
     return await this.newsRepository.save(newsEntity);
   }
 

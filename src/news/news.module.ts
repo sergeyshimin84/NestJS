@@ -1,3 +1,4 @@
+import { RolesGuard } from './../auth/role/roles.guard';
 import { UsersModule } from './../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
@@ -6,10 +7,17 @@ import { NewsService } from './news.service';
 import { CommentsModule } from './comments/comments.module';
 import { MailModule } from '../mail/mail.module';
 import { NewsEntity } from './news.entity';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   controllers: [NewsController],
-  providers: [NewsService],
+  providers: [
+    NewsService, 
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    }
+  ],
   imports: [
     TypeOrmModule.forFeature([NewsEntity]),
     CommentsModule, 
