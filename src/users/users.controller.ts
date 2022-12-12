@@ -2,7 +2,7 @@ import { JwtAuthGuard } from './../auth/jwt-auth.guard';
 import { ParseIntPipe } from '@nestjs/common/pipes';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './../users/dtos/create-user.dto';
-import { Body, Controller, Post, Get, Render, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Get, Render, UseGuards, Patch, Req } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { get } from 'http';
 import { EditUserDto } from './dtos/edit-user.dto';

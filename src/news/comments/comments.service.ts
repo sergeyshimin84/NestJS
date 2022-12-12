@@ -29,7 +29,11 @@ export class CommentsService {
     ) {}
     private readonly comments = {};
 
-    async create(idNews: number, comment: CreateCommentDto): Promise<CommentsEntity> {
+    async create(
+        idNews: number,
+        comment: string,
+        idUser: number,
+    ): Promise<CommentsEntity> {
         const _news = await this.NewsService.findById(idNews);
         if (!_news) {
             throw new HttpException(
@@ -54,7 +58,7 @@ export class CommentsService {
         const commentEntity = new CommentsEntity();
         commentEntity.news = _news;
         commentEntity.user = _user;
-        commentEntity.message = comment.message;
+        commentEntity.message = message;
 
         return this.commentsRepository.save(commentEntity);
     }
