@@ -25,8 +25,10 @@ import { NewsIdDto } from './dtos/news-id.dto';
 import { NewsCreateDto } from './dtos/news-create.dto';
 import { HelperFileLoader } from '../utils/HelperFileLoader';
 import { MailService } from '../mail/mail.service';
-import { UseGuards } from '@nestjs/common/decorators';
+import { Catch, UseGuards } from '@nestjs/common/decorators';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiOperation } from '@nestjs/swagger';
+import { ApiResponse } from '@nestjs/swagger/dist';
   
 const PATH_NEWS = '/news-static/';
 HelperFileLoader.path = PATH_NEWS;
@@ -91,6 +93,13 @@ export class NewsController {
     return news;
   }
 
+  @ApiOperation({ summary: 'Создание новости'})
+  @ApiResponse ({
+    status: 200,
+    description: 'Новость успешно создалась',
+    type: NewsEntity,
+  })
+  @ApiResponse({ status: 403, description: 'Ошибка создания новости'})
   @UseGuards(JwtAuthGuard)
   @Roles(Role.Admin, Role.Moderator)
   @Post('/api')

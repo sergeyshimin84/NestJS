@@ -10,18 +10,35 @@ import {
     import { CategoriesEntity } from '../categories/categories.entity';
     import { UsersEntity } from '../users/esers.entity';
     import { CommentsEntity } from '../news/comments/comments.entity';
+    import { ApiProperty } from '@nestjs/swagger/dist';
     
     @Entity('news')
     export class NewsEntity {
+        @ApiProperty({
+            example: 1,
+            description: 'Индентиыикатор новости',
+        })
         @PrimaryGeneratedColumn()
         id: number;
-        
+
+        @ApiProperty({
+            example: 'Новости про котов',
+            description: 'Заголовок новости',
+        })
         @Column('text')
         title: string;
-        
+
+        @ApiProperty({
+            example: 'Коты классные и милые...',
+            description: 'Описание новости',
+        })
         @Column('text')
         description: string;
-        
+
+        @ApiProperty({
+            example: '',
+            description: 'Обложка новости',
+        })
         @Column('text', {nullable: true})
         cover: string;
         
