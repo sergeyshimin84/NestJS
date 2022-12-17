@@ -1,11 +1,12 @@
+import { checkPermission, Modules } from './../../utils/check-permission';
 import { UsersService } from './../../users/users.service';
 import { NewsService } from './../news.service';
 import { CommentsEntity } from './comments.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getRandomInt } from '../news.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dtos/create-comment-dto';
 import { Repository } from 'sequelize-typescript';
+import { EventsComment } from './dtos/EventsComment.enum';
 
 export type Comment = {
     id?: number;
@@ -64,7 +65,10 @@ export class CommentsService {
     }
 
     async edit(idComment: number, comment: CommentEdit): Promise<CommentsEntity> {
-        const _comment = await this.commentsRepository.findOne(idComment);
+        const _comment = await this.commentsRepository.findOne({
+            wher: {id: idComment},
+            relations: ['news', 'user'],
+        });
         _comment.message = comment.message;
         return this.commentsRepository.save(_comment);
     }
@@ -76,9 +80,12 @@ export class CommentsService {
         });
     }
 
-    async remove(idComment: number): Promise<CommentsEntity> {
-        const _user = await this.commentsRepository.findOne(idComment);
-        if (!idComment) {
+    async remove(idComment: number, userId: number): Promise<CommentsEntity> {
+        const _comment = await this.commentsRepository.findOne({
+            where: { id: idComment },
+            relations: ['news'],
+        });
+        if (!_comment) {
             throw new HttpException(
                 {
                     status: HttpStatus.NOT_FOUND,
@@ -87,7 +94,27 @@ export class CommentsService {
                 HttpStatus.NOT_FOUND,
             );
         }
-        return this.commentsRepository.remove(_comment);
+
+        const _user = await this.UsersService.findById(userId);
+        if (_user.id !== _comment.user.id && 
+            !checkPermission(Modules.editComment, _user.roles)
+            ) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.FORBIDDEN,
+                    error: 'Недостаточно прав для удаления',
+                },
+                HttpStatus.FORBIDDEN,
+            );
+        }
+    
+        const comment = await this.commentsRepository.remove(_comment);
+        this.eventEmitter.emit(EventsComment.remove, {
+            commentId: idComment,
+            newsId: _comment.news.id,
+        });
+
+        return comment;
     }
 
     async removeAll(idNews) {

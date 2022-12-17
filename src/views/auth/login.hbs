@@ -1,0 +1,31 @@
+<main class="form-signin">
+    <div>
+        <h1 class="h3 mb-3 fw-normal">Авторизация</h1>
+
+        <div class="from-floating">
+            <input type="email" class="from-control" id="username" name="username" placeholder="name@example.com" value="Ivan@mail.ru">
+            <label for="usernsme">Email address</label>
+        </div>
+        <div class="from-floating">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" value="454545">
+            <label for="password">Password</label>
+        </div>
+
+        <button class="w-100 btn btn-lg btn-primary" onclick="sendForm()">Sign in</button>
+        <p class="=mt-5 mb-3 text-muted">© 2017-2022</p>
+    </div>
+</main>
+
+<script>
+    function sendForm() {
+        axios({
+            method: 'POST',
+            headers: {
+                'content-type': 'application/ison',
+            },
+            data: {username: $(`#username`)[0].value, password: $(`#password`)[0].value}
+            url: '/auth/login',
+        }).then((data) => {
+        }) 
+    }
+</script>

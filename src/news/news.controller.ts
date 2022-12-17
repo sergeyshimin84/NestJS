@@ -90,7 +90,7 @@ export class NewsController {
       );
     }
 
-    return news;
+    return {news};
   }
 
   @ApiOperation({ summary: 'Создание новости'})

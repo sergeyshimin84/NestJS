@@ -1,3 +1,4 @@
+import { checkPermission, Modules } from './../../utils/check-permission';
 import { JwtAuthGuard } from './../../auth/jwt-auth.guard';
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
@@ -38,8 +39,10 @@ export class CommentsController {
         return this.commentsService.create(idNews, comment.message, jwtUserId);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete('/api/details/:idNews/:idComment')
-    remove(@Param('idComment', ParseIntPipe) idComment: number) {
-        return this.commentsService.remove(idComment);
+    remove(@Param('idComment', ParseIntPipe) idComment: number, @Req() req) {
+        const userId = req.user.id;
+        return this.commentsService.remove(idComment, userId);
     }
 }
