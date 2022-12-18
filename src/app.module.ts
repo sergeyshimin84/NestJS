@@ -11,6 +11,8 @@ import { AuthService } from './auth/auth.service';
 import { AuchController } from './auch/auch.controller';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+
 
 
 @Module({
@@ -28,6 +30,7 @@ import { AuthModule } from './auth/auth.module';
       ServeStaticModule.forRoot({
         rootPath: join(__dirname, '..', 'public'),
       }),
+      ConfigModule.forRoot()[],
       NewsModule,
       MailModule,
       UsersModule,
